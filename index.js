@@ -1,4 +1,4 @@
-let http = require("http");
+/* let http = require("http");
 let url = require("url");
 let fs = require("fs");
 
@@ -29,3 +29,33 @@ http
     });
   })
   .listen(8080);
+
+  */
+
+const express = require("express");
+const path = require("path");
+const fs = require("fs");
+
+const app = express();
+const PORT = 8000;
+
+app.use(express.static(path.join(__dirname)));
+
+app.get("*", (req, res) => {
+  let filePath = path.join(__dirname, req.path);
+
+  if (req.path.endsWith("/")) {
+    filePath = path.join(filePath, "index.html");
+  }
+
+  fs.access(filePath, fs.constants.F_OK, (err) => {
+    if (err) {
+      return res.status(404).sendFile(path.join(__dirname, "404.html"));
+    }
+    res.sendFile(filePath);
+  });
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}`);
+});
