@@ -37,23 +37,26 @@ const path = require("path");
 const fs = require("fs");
 
 const app = express();
-const PORT = 8000;
+const PORT = 8080;
 
-app.use(express.static(path.join(__dirname)));
+app.get("/", (req, res) => {
+  const filePath = path.join(__dirname, "index.html");
+  res.sendFile(filePath);
+});
 
-app.get("*", (req, res) => {
-  let filePath = path.join(__dirname, req.path);
+app.get("/404", (req, res) => {
+  const filePath = path.join(__dirname, "404.html");
+  res.sendFile(filePath);
+});
 
-  if (req.path.endsWith("/")) {
-    filePath = path.join(filePath, "index.html");
-  }
+app.get("/about", (req, res) => {
+  const filePath = path.join(__dirname, "about.html");
+  res.sendFile(filePath);
+});
 
-  fs.access(filePath, fs.constants.F_OK, (err) => {
-    if (err) {
-      return res.status(404).sendFile(path.join(__dirname, "404.html"));
-    }
-    res.sendFile(filePath);
-  });
+app.get("/contact-me", (req, res) => {
+  const filePath = path.join(__dirname, "contact-me.html");
+  res.sendFile(filePath);
 });
 
 app.listen(PORT, () => {
